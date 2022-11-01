@@ -7,7 +7,7 @@ volatile int on_time = 2; // start with the blanket on 25% duty cycle
 volatile uint8_t level = 1;
 unsigned long last_debounce_time, last_level_flash_time = millis();
 #define DEBOUNCE_DELAY 50 // ms 
-#define LEVEL_UPDATE_INTERVAL 1000 //ms
+#define LEVEL_UPDATE_INTERVAL 1000 // ms
 uint8_t reading = 0, last_button_state = 0, last_valid_reading = 0;
 
 /*
@@ -38,7 +38,7 @@ void flash_led(uint8_t num) {
     // pulse light
     PORTB |= _BV(PB1);
     delay(PULSE_DURATION);
-    PORTB |= _BV(PB1);
+    PORTB &= ~_BV(PB1);
     delay(FLASH_DURATION);
     num--;
   }
