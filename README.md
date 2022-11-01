@@ -12,10 +12,11 @@ An excellent way to stay warm while camping/overlanding on a tight electrical en
 
 ## Milestones
 
-- [ ] Find appropriate hardware for controller
-- [ ] Test hardware and find duty cycle
-- [ ] Create PCB 
-- [ ] Write firmware
+- [ x ] Find appropriate hardware for controller
+- [ x ] Test hardware and find duty cycle
+- [ x ] Create PCB 
+- [ x ] Write firmware
+- [ ] Test firmware
 
 ## Getting Started
 
