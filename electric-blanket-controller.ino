@@ -3,8 +3,7 @@
  */
 
 volatile int interrupt_count = 0;
-volatile int on_time = 2; // start with the blanket on 25% duty cycle
-volatile uint8_t level = 1;
+volatile uint8_t level = 1; // start with the blanket on 25% duty cycle
 unsigned long last_debounce_time, last_level_flash_time = millis();
 #define DEBOUNCE_DELAY 50 // ms 
 #define LEVEL_UPDATE_INTERVAL 1500 // ms
@@ -20,7 +19,7 @@ uint8_t reading = 0, last_button_state = 0, last_valid_reading = 0;
  */
 #define TOTAL_CYCLES 8
 ISR (TIMER1_OVF_vect) {
-  if (2 * (level + 1) < on_time) {
+  if (2 * (level + 1) < interrupt_count) {
     PORTB |= _BV(PB0); // MOSFET on
   } else {
     PORTB &= ~_BV(PB0); // MOSFET off
