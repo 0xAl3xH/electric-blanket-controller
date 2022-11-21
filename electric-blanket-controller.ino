@@ -2,13 +2,9 @@
  * The following firmware runs on an ATTiny85 at 1 MHz
  */
 
-volatile int interrupt_count = 0;
 volatile uint8_t level = 1; // start with the blanket on 25% duty cycle
 volatile unsigned long last_debounce_time = millis();
 volatile unsigned long last_level_flash_time = millis();
-#define DEBOUNCE_DELAY 50          // ms
-#define LEVEL_UPDATE_INTERVAL 1000 // ms
-volatile uint8_t reading = 0, last_button_state = 0, last_valid_reading = 0;
 
 /*
  * This timer interrupt handles switching the electric blanket off or on
@@ -18,6 +14,7 @@ volatile uint8_t reading = 0, last_button_state = 0, last_valid_reading = 0;
  * interrupt is triggered, so our duty cycle count should be
  * 8 total interrupt events
  */
+volatile int interrupt_count = 0;
 #define TOTAL_CYCLES 8
 ISR(TIMER1_OVF_vect)
 {
@@ -37,6 +34,8 @@ ISR(TIMER1_OVF_vect)
  * cycling through different power levels
  */
 volatile unsigned long now;
+volatile uint8_t reading = 0, last_button_state = 0, last_valid_reading = 0;
+#define DEBOUNCE_DELAY 50 // ms
 ISR(INT0_vect)
 {
   now = millis();
@@ -51,7 +50,7 @@ ISR(INT0_vect)
   {
     level = (level + 1) % 4;   // cycle through level
     last_level_flash_time = 0; // update asap after returning to main loop from this interrupt
-                               //      last_valid_reading = 0;
+    // last_valid_reading = 0;
   }
   last_debounce_time = now;
   //  }
@@ -94,6 +93,7 @@ void setup()
   sei();
 }
 
+#define LEVEL_UPDATE_INTERVAL 1000 // ms
 void loop()
 {
   // listen/debounce button press
