@@ -16,11 +16,13 @@ An excellent way to stay warm while camping/overlanding on a tight electrical en
 - [ x ] Test hardware and find duty cycle
 - [ x ] Create PCB 
 - [ x ] Write firmware
-- [ x  ] Test firmware
+- [ x ] Test firmware
+- [ x ] Build controller on real PCB with v1.0.0 firmware
+- [ x ] Design a 3D printed case
 
 ## Getting Started
 
-Details for software toolchain and installation will be included here. Hardware information will also be included.
+Flash the `.ino` file using your favorite ATTiny programmer. I didn't have one handy so ended up using an [Arduino Uno](https://www.instructables.com/How-to-Program-an-Attiny85-From-an-Arduino-Uno) to flash the ATTiny. The ATTiny needs to run at 1 MHz clock for this project, which should be the default from factory. The `hardware` directory contains the circuit board schematic and board files in `pcb` as well as a 3D printed case with tight and loose tolerances to account for the variablility in 3D printers. 
 
 ## License
 
