@@ -16,7 +16,7 @@ An excellent way to stay warm while camping/overlanding on a tight electrical en
 - [ x ] Test hardware and find duty cycle
 - [ x ] Create PCB 
 - [ x ] Write firmware
-- [ ] Test firmware
+- [ x  ] Test firmware
 
 ## Getting Started
 
