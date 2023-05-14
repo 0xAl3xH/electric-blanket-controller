@@ -2,7 +2,7 @@
  * The following firmware runs on an ATTiny85 at 1 MHz
  */
 
-volatile uint8_t level = 1; // start with the blanket on 25% duty cycle
+volatile uint8_t level = 1; // start with the blanket on 50% duty cycle
 volatile unsigned long last_debounce_time = millis();
 volatile unsigned long last_level_flash_time = millis();
 
@@ -34,26 +34,40 @@ ISR(TIMER1_OVF_vect)
  * cycling through different power levels
  */
 volatile unsigned long now;
+volatile uint8_t state = 1;
 volatile uint8_t reading = 0, last_button_state = 0, last_valid_reading = 0;
-#define DEBOUNCE_DELAY 50 // ms
+#define DEBOUNCE_DELAY 25 // ms
 ISR(INT0_vect)
 {
   now = millis();
   reading = bit_is_set(PINB, PB2);
-  // TODO figure out why debounce not needed when have access to oscilloscope
-  //  if (now - last_debounce_time > DEBOUNCE_DELAY) { // ignore bounces
-  // valid button press
-  //    if (reading) {
-  //      last_valid_reading = reading;
-  //    }
-  if (!reading)
+  switch (state)
   {
-    level = (level + 1) % 4;   // cycle through level
-    last_level_flash_time = 0; // update asap after returning to main loop from this interrupt
-    // last_valid_reading = 0;
+  case 1: // wait for the rising edge / button press in this state
+    if (reading)
+    {
+      last_debounce_time = now;
+      state = 2;
+    }
+    break;
+  case 2: // wait for the falling edge / button release in this state
+    if (reading)
+    { // invalid, go back to state 1
+      state = 1;
+    }
+    else
+    {
+      // button press is valid if time between rising/falling edge exceeds
+      // debounce delay
+      bool valid = now - last_debounce_time > DEBOUNCE_DELAY;
+      level = valid ? (level + 1) % 4 : level;
+      last_level_flash_time = valid ? 0 : last_level_flash_time;
+      state = 1;
+    }
+    break;
+  default:
+    state = 1;
   }
-  last_debounce_time = now;
-  //  }
 }
 
 /*
@@ -96,27 +110,6 @@ void setup()
 #define LEVEL_UPDATE_INTERVAL 1000 // ms
 void loop()
 {
-  // listen/debounce button press
-  //  reading = bit_is_set(PINB, PB2);
-  //
-  //  if (reading != last_button_state) {
-  //    last_button_state = reading;
-  //    last_debounce_time = millis();
-  //  }
-  //
-  //  // debounce input
-  //  if (millis() - last_debounce_time >= DEBOUNCE_DELAY) {
-  //    // valid input held greater than debounce period
-  //    if (reading && !last_valid_reading) {
-  //      last_valid_reading = reading;
-  //      level = (level + 1) % 4; // cycle through level
-  //      flash_led(level + 1); // represent levels 1 to 4 with corresponding number of LED flashes
-  //      last_level_flash_time = millis();
-  //    } else if (!reading) {
-  //      last_valid_reading = reading;
-  //    }
-  //  }
-
   // periodically pulse LED to show current level
   if (millis() - last_level_flash_time >= LEVEL_UPDATE_INTERVAL)
   {
